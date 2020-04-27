@@ -1,4 +1,5 @@
 import java.util.*; 
+import java.io.*;
 import java.text.*;
 import org.jnativehook.GlobalScreen; 
 import org.jnativehook.keyboard.NativeKeyEvent; 
@@ -16,8 +17,12 @@ public class MM2 implements NativeKeyListener
       catch(Exception e) { e.printStackTrace(); }        
       GlobalScreen.getInstance().addNativeKeyListener(new MM2());     
    }
+   static File oldoutput;
+   static File output;
    static long seconds;
+   static int totalclears = 0;
    static long starttime = System.currentTimeMillis(); 
+   static long cooldown = System.currentTimeMillis(); 
    static ArrayList<Integer> times = new ArrayList<Integer>();
    public void nativeKeyPressed(NativeKeyEvent e)   
    {          
@@ -25,27 +30,59 @@ public class MM2 implements NativeKeyListener
       long secs = time%60; String sds = ""; if(secs < 10) { sds = "0"; }       
       long minutes = (time/60)%60; String sdm = ""; if(minutes < 10) { sdm = "0"; }       
       long hours = time/3600;    
-      String kP = NativeKeyEvent.getKeyText(e.getKeyCode());    
-      if(kP.equals("Comma"))       
-      {                              
-         int sec = (int) (System.currentTimeMillis()/1000);          
-         times.add(sec);          
-         Integer [] timearray = times.toArray(new Integer[times.size()]);          
-         int hourcount = 0;          
-         int tenmincount = 0;          
-         for(int i = 0; i < timearray.length; i++)          
-         {             
-            if((sec - timearray[i]) <= 3600)             
-            {                
-               hourcount++;                
-               if((sec - timearray[i]) <= 600)                
-               {                   
-                  tenmincount++;                
-               }             
+      String kP = NativeKeyEvent.getKeyText(e.getKeyCode());
+      long cd = System.currentTimeMillis() - cooldown;
+      int seclast = ((int) cd ) / 1000;
+      if(cd >= 20000)
+      {
+         if(kP.equals("Comma"))       
+         {                              
+            cooldown = System.currentTimeMillis();
+            int sec = (int) (System.currentTimeMillis()/1000);          
+            times.add(sec);          
+            Integer [] timearray = times.toArray(new Integer[times.size()]);          
+            int hourcount = 0;          
+            int tenmincount = 0;          
+            for(int i = 0; i < timearray.length; i++)          
+            {             
+               if((sec - timearray[i]) <= 3600)             
+               {                
+                  hourcount++;                
+                  if((sec - timearray[i]) <= 600)                
+                  {                   
+                     tenmincount++;                
+                  }             
+               }
             }
-         }          
-         System.out.println("Recent clear rates: " + "\n" + hourcount + " clears / past hr" + "\n" + tenmincount + " clears / past 10 min" + "\n" + "Time since stream start: " + hours + ":" + sdm + minutes + ":" + sds + secs + "\n");       
-      }    
+            totalclears++;
+            String line = "Recent clear rates: ";
+            line += "\n";
+            line += Integer.toString(hourcount);
+            line += " clears / past hr";
+            line += "\n";
+            line += Integer.toString(tenmincount);
+            line += " clears / past 10 min";
+            line += "\n";
+            line += "Time since stream start: ";
+            line += Long.toString(hours);
+            line += ":";
+            line += sdm;
+            line += Long.toString(minutes);
+            line += ":";
+            line += sds;
+            line += Long.toString(secs);
+            line += " (+";
+            line += Integer.toString(seclast);
+            line += ")";
+            line += "\n";
+            line += "Clears since stream start: ";
+            line += totalclears;
+            line += "\n";
+            System.out.println(line);
+            WriteFile(line);
+            //System.out.println("Recent clear rates: " + "\n" + hourcount + " clears / past hr" + "\n" + tenmincount + " clears / past 10 min" + "\n" + "Time since stream start: " + hours + ":" + sdm + minutes + ":" + sds + secs + "\n");       
+         }    
+      }
          //System.out.println(counter + " " + hours + ":" + sdm + minutes + ":" + sds + seconds + " " + locations[sel] + ": " + count[sel] + "/" + max[sel]);
    }
    public void nativeKeyReleased(NativeKeyEvent e){}   
@@ -77,7 +114,23 @@ public class MM2 implements NativeKeyListener
          }          
          System.out.println("Recent clear rates: " + "\n" + hourcount + " clears / hr" + "\n" + tenmincount + " clears / 10 min" + "\n");       
         }
-     }*/    
+     }*/
+     public static void WriteFile(String line)
+     {
+         oldoutput = new File("Events.txt");
+         if(oldoutput.canRead() == true)
+         {
+            oldoutput.delete();
+         }
+         output = new File("Events.txt");
+         try
+         {
+            FileWriter fW = new FileWriter(output, false);
+            fW.write(line);
+            fW.close();
+         }
+         catch (IOException e) { e.printStackTrace(); }
+     }
      public static void tracker()    
      {       
          long seconds;       
