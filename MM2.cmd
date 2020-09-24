@@ -1,1 +1,1 @@
-java -jar MM2Lives.jar
+java -jar MM2.jar
