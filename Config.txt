@@ -1,0 +1,13 @@
+(Header Line) "Recent clear rates:"=TRUE 
+"X clears / past hr"=TRUE 
+"X clears / past 10 min"=TRUE 
+"Time since run start: X:XX:XX"=FALSE      *Keep this line false if you have your own stopwatch to place over it else it'll just show the nonmoving last update runtime*
+    "(+TimeSinceLastInputInSeconds)"=TRUE
+"Clears since run start: X"=FALSE
+"Current Pace: X:XX:XX"=TRUE 
+    "(+AverageTimePerClearToGetWRInSeconds)"=TRUE
+LineWithPB/WR=TRUE
+    "WR: X:XX:XX"=TRUE  
+    "PB: X:XX:XX"=TRUE
+COOLDOWN=20
+     *The above line is the number of seconds between times button can be pressed, used to prevent accidental secondary input
