@@ -3,7 +3,7 @@
 "X clears / past 10 min"=TRUE 
 "Time since run start: X:XX:XX"=FALSE      *Keep this line false if you have your own stopwatch to place over it else it'll just show the nonmoving last update runtime*
     "(+TimeSinceLastInputInSeconds)"=TRUE
-"Clears since run start: X"=FALSE
+"Clears since run start: X"=TRUE
 "Current Pace: X:XX:XX"=TRUE 
     "(+AverageTimePerClearToGetWRInSeconds)"=TRUE
 LineWithPB/WR=TRUE
