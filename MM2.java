@@ -98,7 +98,7 @@ public class MM2 implements NativeKeyListener
          if(curLine.contains("Recent clear rates:") && curLine.contains("TRUE")) {header = true;}
          if(curLine.contains("X clears / past hr") && curLine.contains("TRUE")) {pasthr = true;}
          if(curLine.contains("X clears / past 10 min") && curLine.contains("TRUE")) {pastten = true;}
-         if(curLine.contains("Time since run start: X:XX:XX") && curLine.contains("TRUE")) {timerunstart = true;}
+         if(curLine.contains("Time elapsed: X:XX:XX") && curLine.contains("TRUE")) {timerunstart = true;}
          if(curLine.contains("(+TimeSinceLastInputInSeconds)") && curLine.contains("TRUE")) {lastinput = true;}
          if(curLine.contains("Clears since run start: X") && curLine.contains("TRUE")) {clearsrunstart = true;}
          if(curLine.contains("Current Pace: X:XX:XX") && curLine.contains("TRUE")) {curpace = true;}
