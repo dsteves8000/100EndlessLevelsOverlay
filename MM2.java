@@ -5,7 +5,7 @@ import org.jnativehook.GlobalScreen;
 import org.jnativehook.keyboard.NativeKeyEvent; 
 import org.jnativehook.keyboard.NativeKeyListener; 
 import java.lang.Math; 
-public class MM2New implements NativeKeyListener 
+public class MM2 implements NativeKeyListener 
 { 
    public static void main(String [] args) throws FileNotFoundException, IOException
    { 
@@ -13,14 +13,14 @@ public class MM2New implements NativeKeyListener
       handleConfig();
       handlePBWR();
       loadConfig();
-	   loadPBWR();
+      loadPBWR();
       //Reads user input (currently set to work when the comma button is pressed, you might need help on setting this up if you don't know about classpaths 
       try 
       { 
          GlobalScreen.registerNativeHook(); 
       } 
       catch(Exception e) { e.printStackTrace(); } 
-      GlobalScreen.getInstance().addNativeKeyListener(new MM2New()); 
+      GlobalScreen.getInstance().addNativeKeyListener(new MM2()); 
    } 
    static File oldoutput, output, PBWR, Config;
    static boolean header, pasthr, pastten, timerunstart, lastinput, clearsrunstart, curpace, avgtime, linewithPBWR, dispPB, dispWR;
