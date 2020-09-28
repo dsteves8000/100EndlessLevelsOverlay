@@ -13,24 +13,37 @@ public class MM2 implements NativeKeyListener
       handleConfig();
       handlePBWR();
       loadConfig();
-      loadPBWR();
+	  loadPBWR();
       //Reads user input (currently set to work when the comma button is pressed, you might need help on setting this up if you don't know about classpaths 
       try 
       { 
          GlobalScreen.registerNativeHook(); 
       } 
       catch(Exception e) { e.printStackTrace(); } 
+      String line = "";
+      if(header == true) { line += "Recent clear rates: "; line += "\n"; }
+      if(pasthr == true) { line += Integer.toString(hourcount); line += " clears / past hr "; line += "\n"; }
+      if(pastten == true) { line += Integer.toString(tenmincount); line += " clears / past 10 min "; line += "\n"; }
+      line += "Time elapsed: "; if(timerunstart) {line += "0:00:00";} else { line += "  "; line += ":"; line += "  "; line += ":"; line += "  "; } if(lastinput == true) { line += " (+0)"; } line += "\n"; 
+      if(clearsrunstart == true) { line += "Clears since run start: 0"; line += "\n"; }
+      if(curpace == true) { line += "Current Pace: "; line += "0:00:00";} if(avgtime == true) { line += " (+0)"; line += "\n"; }
+      if(linewithPBWR == true) { line += thePBWR;  line += "\n" ; }
+      System.out.println(line); 
+      WriteFile(line); 
       GlobalScreen.getInstance().addNativeKeyListener(new MM2()); 
    } 
    static File oldoutput, output, PBWR, Config;
    static boolean header, pasthr, pastten, timerunstart, lastinput, clearsrunstart, curpace, avgtime, linewithPBWR, dispPB, dispWR;
    static long seconds; 
    static int totalclears = 0; 
+   static int hourcount = 0;
+   static int tenmincount = 0;
    static long starttime = System.currentTimeMillis(); 
    static long cooldown = System.currentTimeMillis(); 
    static ArrayList<Integer> times = new ArrayList<Integer>();
    static String thePBWR = "";
    static long cdval = 20;
+   static int numberofclears = 100;
    public static boolean handlePBWR() throws IOException
    {
 	   PBWR = new File ("PBWR.txt");
@@ -45,7 +58,7 @@ public class MM2 implements NativeKeyListener
    }
    public static void loadPBWR() throws FileNotFoundException
    {
-	   Scanner in = new Scanner(PBWR);
+	  Scanner in = new Scanner(PBWR);
       Scanner check = new Scanner(PBWR);
       String [] tPBWR = new String [2];
       tPBWR[0] = "";
@@ -91,7 +104,7 @@ public class MM2 implements NativeKeyListener
    public static void loadConfig() throws FileNotFoundException
    {
 	   Scanner in = new Scanner(Config);
-      String curLine = null;
+       String curLine = null;
 	   while(in.hasNextLine())
 	   {
          curLine = in.nextLine();
@@ -107,6 +120,7 @@ public class MM2 implements NativeKeyListener
          if(curLine.contains("WR: X:XX:XX") && curLine.contains("TRUE")) {dispWR = true;}
          if(curLine.contains("PB: X:XX:XX") && curLine.contains("TRUE")) {dispPB = true;}
          if(curLine.contains("COOLDOWN")) {cdval = Integer.parseInt(curLine.substring(curLine.lastIndexOf("=") + 1))  ;}
+         if(curLine.contains("NUMBEROFCLEARS")) {numberofclears = Integer.parseInt(curLine.substring(curLine.lastIndexOf("=") + 1))  ;}
 	   }
    } 
    public void nativeKeyPressed(NativeKeyEvent e) 
@@ -140,8 +154,8 @@ public class MM2 implements NativeKeyListener
             int sec = (int) (System.currentTimeMillis()/1000); 
             times.add(sec); 
             Integer [] timearray = times.toArray(new Integer[times.size()]); 
-            int hourcount = 0; 
-            int tenmincount = 0; 
+            hourcount = 0; 
+            tenmincount = 0; 
             for(int i = 0; i < timearray.length; i++) 
             { 
                if((sec - timearray[i]) <= 3600) 
@@ -154,7 +168,7 @@ public class MM2 implements NativeKeyListener
                } 
              } 
              totalclears++;
-             long pacetime = (time*100)/totalclears;
+             long pacetime = (time*numberofclears)/totalclears;
              long pacesecs = pacetime%60; 
              String pacesds = ""; 
              if(pacesecs < 10) 
@@ -169,9 +183,13 @@ public class MM2 implements NativeKeyListener
              }  
              long pacehours = pacetime/3600; 
              long record = 5058;
-             double tilPBavg =  (double)Math.round((record - time)/(double)(100 - totalclears) * 100d)/ 100d;
+             double tilPBavg =  (double)Math.round((record - time)/(double)(numberofclears - totalclears) * 100d)/ 100d;
+             if(tilPBavg > 100000)
+             {
+            	 tilPBavg = 0;
+             }
              String plus = "";
-             if(tilPBavg > 0)
+             if(tilPBavg >= 0)
              {
                plus = "+";
              }
