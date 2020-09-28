@@ -1,7 +1,9 @@
+DISPLAY
+=======
 (Header Line) "Recent clear rates:"=TRUE 
 "X clears / past hr"=TRUE 
 "X clears / past 10 min"=TRUE 
-"Time elapsed: X:XX:XX"=FALSE      *Keep this line false if you have your own stopwatch to place over it else it'll just show the nonmoving last update runtime*
+"Time since run start: X:XX:XX"=FALSE      *Keep this line false if you have your own stopwatch to place over it else it'll just show the nonmoving last update runtime*
     "(+TimeSinceLastInputInSeconds)"=TRUE
 "Clears since run start: X"=TRUE
 "Current Pace: X:XX:XX"=TRUE 
@@ -9,5 +11,10 @@
 LineWithPB/WR=TRUE
     "WR: X:XX:XX"=TRUE  
     "PB: X:XX:XX"=TRUE
+    
+OPTIONS
+=======
 COOLDOWN=20
      *The above line is the number of seconds between times button can be pressed, used to prevent accidental secondary input
+NUMBEROFCLEARS=100
+	*The above line is by default 100 if you are going to clear 100 levels, but you can change this to any number greater than 0, 16 is a suggestion for 16 level runs on speedrun.com
