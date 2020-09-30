@@ -5,6 +5,12 @@ import org.jnativehook.GlobalScreen;
 import org.jnativehook.keyboard.NativeKeyEvent; 
 import org.jnativehook.keyboard.NativeKeyListener; 
 import java.lang.Math; 
+import org.jfree.chart.ChartFactory; 
+import org.jfree.chart.JFreeChart; 
+import org.jfree.data.xy.XYSeries; 
+import org.jfree.chart.plot.PlotOrientation; 
+import org.jfree.data.xy.XYSeriesCollection; 
+import org.jfree.chart.ChartUtils;
 public class MM2 implements NativeKeyListener 
 { 
    public static void main(String [] args) throws FileNotFoundException, IOException
@@ -41,6 +47,7 @@ public class MM2 implements NativeKeyListener
    static long starttime = System.currentTimeMillis(); 
    static long cooldown = System.currentTimeMillis(); 
    static ArrayList<Integer> times = new ArrayList<Integer>();
+   static ArrayList<Integer> paces = new ArrayList<Integer>();
    static String thePBWR = "";
    static long cdval = 20;
    static int numberofclears = 100;
@@ -142,7 +149,27 @@ public class MM2 implements NativeKeyListener
       String kP = NativeKeyEvent.getKeyText(e.getKeyCode()); 
       if(kP.equals("Back Slash"))
       {
-         System.exit(1);
+    	  int sec = (int) (starttime/1000);          
+    	  Integer [] timearray = times.toArray(new Integer[times.size()]);           
+    	  Integer [] pacearray = paces.toArray(new Integer[times.size()]);          
+    	  double [] timedoubles = new double [timearray.length+1];          
+    	  double [] clearcountarray = new double [timearray.length+1];          
+    	  double [] pacetimes = new double [pacearray.length+1];          
+    	  timedoubles[0] = 0.0;          
+    	  clearcountarray[0] = 0.0;          
+    	  pacetimes[0] = 0.0;          
+    	  for(int i = 0; i < timearray.length; i++)          
+    	  {             
+    		  clearcountarray[i+1] = (i+1);             
+    		  timedoubles[i+1] = (double) (timearray[i] - sec);             
+    		  pacetimes[i+1] = (double) (pacearray[i]);          
+    	  }                      
+    	  try          
+    	  {             
+    		  plot(clearcountarray, timedoubles, pacetimes);          
+    	  }          
+    	  catch(Exception g) {}            
+    	  System.exit(1);
       }   
       long cd = System.currentTimeMillis() - cooldown; //Cooldown prevents accidental secondary presses, is now handled through config file
       int seclast = ((int) cd ) / 1000; 
@@ -182,6 +209,7 @@ public class MM2 implements NativeKeyListener
                  pacesdm = "0"; 
              }  
              long pacehours = pacetime/3600; 
+             paces.add((int) pacetime);
              long record = 5058;
              double tilPBavg =  (double)Math.round((record - time)/(double)(numberofclears - totalclears) * 100d)/ 100d;
              if(tilPBavg > 100000)
@@ -224,4 +252,33 @@ public class MM2 implements NativeKeyListener
       } 
       catch (IOException e) { e.printStackTrace(); } 
    } 
+   public static void plot(double [] x, double [] y, double [] p) throws Exception    
+   {       
+	   final XYSeries thetimes = new XYSeries("Time");       
+	   final XYSeries thepaces = new XYSeries("Pace");       
+	   for(int i = 0; i < y.length; i++)       
+	   {          
+		   thetimes.add(x[i], y[i]);          
+		   if(i > 0)          
+		   {             
+			   thepaces.add(x[i], p[i]);          
+		   }       
+	   }       
+	   final XYSeriesCollection dataset = new XYSeriesCollection();       
+	   dataset.addSeries(thetimes);       
+	   dataset.addSeries(thepaces);       
+	   JFreeChart xylineChart = ChartFactory.createXYLineChart("Clears Over Cumulative Time", "Clears", "Time (seconds)", dataset, PlotOrientation.VERTICAL, true, true, false);      
+	   int width = 640;       
+	   int height = 480;       
+	   boolean exists = true;       
+	   int count = 1;       
+	   String save = "RunAnalytics.jpeg";       
+	   File XYChart = new File(save);       
+	   while(XYChart.exists())        
+	   {          
+		   save = "RunAnalytics" + (count++) +".jpeg";          
+		   XYChart = new File(save);        
+	   }       
+	   ChartUtils.saveChartAsJPEG(XYChart, xylineChart, width, height);    
+   }
 }
