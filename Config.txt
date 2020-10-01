@@ -3,7 +3,7 @@ DISPLAY
 (Header Line) "Recent clear rates:"=TRUE 
 "X clears / past hr"=TRUE 
 "X clears / past 10 min"=TRUE 
-"Time since run start: X:XX:XX"=FALSE      *Keep this line false if you have your own stopwatch to place over it else it'll just show the nonmoving last update runtime*
+"Time elapsed: X:XX:XX"=FALSE      *Keep this line false if you have your own stopwatch to place over it else it'll just show the nonmoving last update runtime*
     "(+TimeSinceLastInputInSeconds)"=TRUE
 "Clears since run start: X"=TRUE
 "Current Pace: X:XX:XX"=TRUE 
